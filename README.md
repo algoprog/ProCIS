@@ -1,6 +1,6 @@
 # ProCIS
 
-ProCIS is a large-scale dataset for training and evaluation of proactive retrieval in conversations. It contains over 3M conversations with relevant Wikipedia links for training and 100 conversations with human annotations with supporting evidence for testing. In this repo you can find the implementation of our npDCG metric and some baselines. You can download the dataset from [here]()
+ProCIS is a large-scale dataset for training and evaluation of proactive retrieval in conversations. It contains over 3M conversations with relevant Wikipedia links for training and 100 conversations with human annotations with supporting evidence for testing. In this repo you can find the implementation of our npDCG metric and some baselines. You can download the dataset from [here](https://archive.org/details/procis)
 
 You can use the following to cite our work:
 
