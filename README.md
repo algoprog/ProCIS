@@ -7,7 +7,7 @@ You can use the following to cite our work:
 ```
 @article{Samarinas_2024_ProCIS,
   title   =  {ProCIS: A Benchmark for Proactive Retrieval in Conversations},
-  author  =  {Chris Samarinas and Hamed Zamani},
+  author  =  {},
   journal =  {Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval},
   year    =  {2024}
 }
