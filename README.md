@@ -24,7 +24,7 @@ ProCIS consists of four subsets: train, dev, future-dev, and test. The three sub
     "thread": [{
       "id": "response id",
       "author": <username>,
-      "text": "Response text",
+      "text": "response text",
       "date": <unix timestamp>,
       "score": <reddit score>,
       "wiki_links": [<list of wikipedia page names mentioned>],
