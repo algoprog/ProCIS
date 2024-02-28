@@ -60,6 +60,8 @@ The annotations field is only for the test split, the rest of the schema remains
 
 # Baselines
 
+In this repo you can reproduce the baseline results for BM25, dense retrieval (single-vector) and LMGR (see `baselines.py`). The proactive retrieval results of all the tested methods to date can be seen in the table below:
+
 | **Model** | **npDCG@5** | **npDCG@20** | **npDCG@100** |
 |---|---|---|---|
 | BM25 | 0.0124 | 0.0177 | 0.0201 |
