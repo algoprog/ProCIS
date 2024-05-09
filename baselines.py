@@ -3,14 +3,16 @@ import os
 
 from tqdm import tqdm
 from trectools import TrecQrel, TrecRun, TrecEval
-
-from models.lmgr import LMGR
-from models.dr import DenseRetriever, prepare_query
-from models.bm25 import BM25
-from npdcg_metric import calculate_npdcg
-
+from model_lmgr import LMGR
+from cpg_metric import calculate_npdcg
+from model_dr import DenseRetriever, prepare_query
+from model_bm25 import BM25
+from proactive_classifier import BinaryClassifier
 
 method = 'lmgr'
+topk = 20
+
+print(f'Running non-proactive evaluation for {method}...')
 
 # load corpus
 print("Loading corpus...")
@@ -37,8 +39,8 @@ if method == 'dr':
 elif method == 'bm25':
     print('loading model...')
     model = BM25(load=True)
-    #print('indexing...')
-    #model.index_documents(articles_descriptions)
+    print('indexing...')
+    model.index_documents(articles_descriptions)
 elif method == 'lmgr':
     model = LMGR()
 
@@ -50,9 +52,15 @@ rel_wikis = [] # wiki names for each query
 # for proactive, using conversation histories as query
 include_last_utterance = False
 queries_proactive = [] # queries/histories, multiple per conversation
+queries_proactive_acts = [] # binary labels, if 1 then search should run, otherwise return empty result list
 rel_wikis_proactive = [] # wiki names for each conversation subquery
 
-with open('test.jsonl') as f:
+print('loading proactive classifier...')
+classifier = BinaryClassifier()
+classifier.load_model('best_model.pth')
+
+print('loading data...')
+with open('test_final.jsonl') as f:
     for line in f:
         d = json.loads(line)
         if method == 'dr':
@@ -67,6 +75,7 @@ with open('test.jsonl') as f:
         rel_wikis.append(wiki_links)
 
         subqueries = []
+        subqueries_acts = [] # a list of binary labels, if 1 then search should run, otherwise return empty result list
         subqueries_wikis = []
         for i in range(len(d['thread'])):
             d_sub = d.copy()
@@ -74,6 +83,10 @@ with open('test.jsonl') as f:
                 d_sub['thread'] = d['thread'][:i+1]
             else:
                 d_sub['thread'] = d['thread'][:i]
+            
+            subquery = prepare_query(d_sub, turns_max_tokens=300, title_max_tokens=30, post_max_tokens=100)
+            pred_label = classifier.predict(subquery)
+            subqueries_acts.append(pred_label)
             
             if method != 'lmgr':
                 if method == 'dr':
@@ -88,34 +101,31 @@ with open('test.jsonl') as f:
             subqueries_wikis.append(wiki_links)
         
         queries_proactive.append(subqueries)
+        queries_proactive_acts.append(subqueries_acts)
         rel_wikis_proactive.append(subqueries_wikis)
-
-queries = queries[:1]
-rel_wikis = rel_wikis[:1]
 
 # evaluation for non-proactive
 print('running non-proactive evaluation...')
-scores = model.search(queries, topk=20) # list of lists of tuples (doc_id, score)
+scores = model.search(queries, topk=topk) # list of lists of tuples (doc_id, score)
 
 # create TrecQrel and TrecRun objects
-
 qrel_data = [(i, wiki[0], wiki[1]) for i, wikis in enumerate(rel_wikis) for wiki in wikis]
 # write to csv with headers query, docid, rel
-with open('qrel_.csv', 'w+') as f:
+with open('qrel.csv', 'w+') as f:
     # query docid rel
     for i, wiki in enumerate(qrel_data):
         f.write(' '.join(map(str, wiki)) + '\n')
 
 run_data = [(i, wiki[0], rank, wiki[1]) for i, scores_ in enumerate(scores) for rank, wiki in enumerate(scores_)]
 # write to csv with headers query, docid, rank
-with open('run_.csv', 'w+') as f:
+with open('run.csv', 'w+') as f:
     # query docid rank score
     for i, wiki in enumerate(run_data):
         f.write(' '.join(map(str, wiki)) + '\n')
 
-qrel = TrecQrel('qrel_.csv', qrels_header=['query', 'docid', 'rel'])
+qrel = TrecQrel('qrel.csv', qrels_header=['query', 'docid', 'rel'])
 run = TrecRun()
-run.read_run('run_.csv', run_header=['query', 'docid', 'rank', 'score'])
+run.read_run('run.csv', run_header=['query', 'docid', 'rank', 'score'])
 
 # create TrecEval object
 te = TrecEval(run, qrel)
@@ -158,15 +168,16 @@ print('---')
 
 # evaluation for proactive
 print('running proactive evaluation...')
-queries_proactive = queries_proactive[:1]
 
 npdcg = []
 cuttoffs = [5, 10, 20, 100, 1000]
 
 for conv_id, subqueries in enumerate(queries_proactive):
-    scores = model.search(subqueries, topk=20) # list of lists of tuples (doc_id, score)
+    scores = [model.search([subqueries[i]], topk=topk)[0] if queries_proactive_acts[conv_id][i] == 1 else [] for i in range(len(subqueries))]
+    print(scores)
     retrieved = []
     for thread_id, subquery_scores in enumerate(scores):
+        print(f"subquery_scores: {subquery_scores}")
         retrieved_docs = [doc_id for doc_id, score in subquery_scores]
         correct_docs = rel_wikis_proactive[conv_id][thread_id]
         retrieved.append({'retrieved_docs': retrieved_docs, 'correct_docs': correct_docs})
@@ -175,4 +186,3 @@ for conv_id, subqueries in enumerate(queries_proactive):
 # calculate average npdcg per cutoff, calculate_npdcg returns dict
 npdcg_avg = {c: sum([npdcg[i][c] for i in range(len(npdcg))]) / len(npdcg) for c in cuttoffs}
 print(npdcg_avg)
-
