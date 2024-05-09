@@ -29,7 +29,7 @@ with open("collection.jsonl") as f:
 if method == 'dr':
     index_path = 'index_dr_v_34K.pkl'
     print('loading model...')
-    model = DenseRetriever('weights_dr_v_64/34K', dim=768)
+    model = DenseRetriever('ANCE-ProCIS', dim=768)
     print('indexing...')
     if not os.path.exists(index_path):
         model.create_index_from_documents(articles_descriptions)
