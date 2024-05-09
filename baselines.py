@@ -4,10 +4,10 @@ import os
 from tqdm import tqdm
 from trectools import TrecQrel, TrecRun, TrecEval
 from model_lmgr import LMGR
-from cpg_metric import calculate_npdcg
 from model_dr import DenseRetriever, prepare_query
 from model_bm25 import BM25
 from proactive_classifier import BinaryClassifier
+from metrics import calculate_npdcg
 
 method = 'lmgr'
 topk = 20
