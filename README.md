@@ -43,6 +43,34 @@ ProCIS consists of four subsets: train, dev, future-dev, and test. The three sub
 
 The annotations field is only for the test split, the rest of the schema remains the same for all splits.
 
+# Baselines
+
+In this repo you can reproduce the baseline results for BM25, dense retrieval (single-vector) and LMGR (see `baselines.py`).
+
+## Reactive Retrieval
+
+| **Model** | **nDCG@5** | **nDCG@20** | **nDCG@100** | **MRR** | **MAP** | **R@5** | **R@20** | **R@100** | **R@1K** |
+|---|---|---|---|---|---|---|---|---|---|
+| BM25 | 0.0654 | 0.0754 | 0.0969 | 0.1561 | 0.0395 | 0.0410 | 0.0687 | 0.1202 | 0.2266 |
+| SPLADE | 0.1605 | 0.1578 | 0.1575 | 0.4752 | 0.0752 | 0.0946 | 0.1343 | 0.1432 | 0.2946 |
+| ANCE | 0.1854 | 0.1912 | 0.2240 | 0.4902 | 0.0984 | 0.0989 | 0.1635 | 0.2517 | 0.4316 |
+| ColBERT | 0.2091 | 0.2094 | 0.2383 | 0.5679 | 0.1113 | 0.1117 | 0.1778 | 0.2649 | 0.4564 |
+| LMGR, k=1 | 0.2638 | 0.3678 | 0.3678 | 0.6187 | 0.2000 | 0.2116 | 0.4091 | 0.4091 | 0.4091 |
+| LMGR, k=3 | 0.2714 | 0.3986 | 0.3986 | 0.6132 | 0.2198 | 0.2354 | 0.4614 | 0.4614 | 0.4614 |
+| **LMGR, k=5** | **0.3408\*** | **0.4524\*** | - | **0.6300\*** | **0.2663\*** | **0.2853\*** | **0.5306\*** | - | - |
+
+## Proactive Retrieval
+
+| **Model** | **npDCG@5** | **npDCG@20** | **npDCG@100** |
+|---|---|---|---|
+| BM25 | 0.0229 | 0.0337 | 0.0405 |
+| SPLADE | 0.1305 | 0.1440 | 0.1542 |
+| ANCE | 0.1508 | 0.1792 | 0.2061 |
+| **ColBERT** | **0.1719** | **0.1944** | **0.2172** |
+| LMGR, k=1 | 0.0574 | 0.1445 | - |
+| LMGR, k=3 | 0.0613 | 0.1527 | - |
+| LMGR, k=5 | 0.0781 | 0.1840 | - |
+
 # Dataset Statistics
 
 |   | **train** | **dev** | **future-dev** | **test** |
@@ -57,20 +85,6 @@ The annotations field is only for the test split, the rest of the schema remains
 | Avg. number of Wikipedia links per conversation | 1.71 (± 2.46) | 1.90 (± 3.03) | 1.15 (± 0.57) | 1.15 (± 0.46) |
 | Avg. number of unique users per conversation | 3.17 (± 1.41) | 2.93 (± 1.16) | 2.88 (± 1.11) | 3.41 (± 1.39) |
 | Avg. number of comments per user | 6.71 (± 462.74) | 1.88 (± 8.21) | 1.92 (± 12.93) | 1.45 (± 2.49) |
-
-# Baselines
-
-In this repo you can reproduce the baseline results for BM25, dense retrieval (single-vector) and LMGR (see `baselines.py`). The proactive retrieval results of all the tested methods to date can be seen in the table below:
-
-| **Model** | **npDCG@5** | **npDCG@20** | **npDCG@100** |
-|---|---|---|---|
-| BM25 | 0.0124 | 0.0177 | 0.0201 |
-| SPLADE | 0.0707 | 0.0757 | 0.0766 |
-| ANCE | 0.0817 | 0.0942 | 0.1024 |
-| ColBERT | 0.0931 | 0.1022 | 0.1079 |
-| LMGR, k=1 | 0.2059 | 0.3143 | - |
-| LMGR, k=3 | 0.2201 | 0.3321 | - |
-| **LMGR, k=5** | **0.2802*** | **0.4002*** | - |
 
 # Citation
 
