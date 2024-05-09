@@ -12,7 +12,7 @@ from metrics import calculate_npdcg
 method = 'lmgr'
 topk = 20
 
-print(f'Running non-proactive evaluation for {method}...')
+print(f'Running evaluation for {method}...')
 
 # load corpus
 print("Loading corpus...")
