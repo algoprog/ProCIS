@@ -57,7 +57,7 @@ rel_wikis_proactive = [] # wiki names for each conversation subquery
 
 print('loading proactive classifier...')
 classifier = BinaryClassifier()
-classifier.load_model('best_model.pth')
+classifier.load_model('DeBERTa-v3-base-ProCIS-Classifier/classifier.pth')
 
 print('loading data...')
 with open('test_final.jsonl') as f:
