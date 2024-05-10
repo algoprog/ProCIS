@@ -27,9 +27,9 @@ with open("collection.jsonl") as f:
         wiki_to_id[d["wiki"]] = len(articles_descriptions) - 1
 
 if method == 'dr':
-    index_path = 'index_dr_v_34K.pkl'
+    index_path = 'index_dr.pkl'
     print('loading model...')
-    model = DenseRetriever('ANCE-ProCIS', dim=768)
+    model = DenseRetriever('ANCE-distilbert-ProCIS', dim=768)
     print('indexing...')
     if not os.path.exists(index_path):
         model.create_index_from_documents(articles_descriptions)
