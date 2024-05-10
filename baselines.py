@@ -173,7 +173,7 @@ npdcg = []
 cuttoffs = [5, 10, 20, 100, 1000]
 
 for conv_id, subqueries in enumerate(queries_proactive):
-    scores = [model.search([subqueries[i]], topk=topk)[0] if queries_proactive_acts[conv_id][i] == 1 else [] for i in range(len(subqueries))]
+    scores = [model.search([subqueries[i]], topk=topk, proactive=True)[0] if queries_proactive_acts[conv_id][i] == 1 else [] for i in range(len(subqueries))]
     print(scores)
     retrieved = []
     for thread_id, subquery_scores in enumerate(scores):
