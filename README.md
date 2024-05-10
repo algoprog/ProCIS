@@ -43,6 +43,10 @@ ProCIS consists of four subsets: train, dev, future-dev, and test. The three sub
 
 The annotations field is only for the test split, the rest of the schema remains the same for all splits.
 
+# Pre-trained Models
+- [Proactive Binary Classifier (DeBERTa-v3-base)](https://huggingface.co/algoprog/DeBERTa-v3-base-ProCIS-Classifier)
+- [Dense Retriever (ANCE-distilbert)](https://huggingface.co/algoprog/ANCE-distilbert-ProCIS)
+
 # Baselines
 
 In this repo you can reproduce the baseline results for BM25, vanilla dense retrieval (single-vector) and LMGR (see `baselines.py`). In the following 2 tables are our results for all the other models we tested.
