@@ -6,12 +6,11 @@ import re
 from model_dr import DenseRetriever
 from tqdm import tqdm
 
-def chatgpt_api(prompt):
+def chatgpt_api(prompt, model_name='gpt-4-turbo-preview'):
     openai.api_key = "YOUR-API-KEY"
     openai.api_base = "https://api.openai.com/v1"
-    gpt_model_name = 'gpt-4-turbo-preview'
     response = openai.ChatCompletion.create(
-        model=gpt_model_name,
+        model=model_name,
         max_tokens=3000,
         temperature=0.0,
         messages=[
@@ -77,12 +76,9 @@ class LMGR:
             self.retriever.create_index_from_documents(self.docs)
             self.retriever.save_index(vectors_path='embeddings.pkl')
     
-    def search(self, conversations, topk=20, candidates=5):
-        #o = open('lmgr_5.jsonl', 'w+')
+    def search(self, conversations, topk=20, candidates=3, proactive=False):
         results = []
         for conversation in tqdm(conversations):
-            #print(f"generating candidates for post: {conversation['post']['title']}")
-
             comments = conversation["thread"]
             user_to_id = {}
             uid = 1
@@ -93,19 +89,21 @@ class LMGR:
             reg_exp = r'\n+'
             comments_str = "\n".join([f"user {user_to_id[c['author']]}: {re.sub(reg_exp, ' ', c['text'])}" for c in comments])
             
-            # prompt = f"\npost title: {conversation['post']['title']}\n\npost text: {conversation['post']['text']}\n\ncomments:\n{comments_str}\n\n" \
-            #  f"based on the last comment, or the post if no comments shown, give up to {topk} wikipedia articles that provide " \
-            #  f"useful information and answer potential questions, ambiguities or misunderstandings or they provide some relevant context, only show articles that add very useful context, you don't need to generate all {topk}, you might also give 0 results if not necesary, " \
-            #  "ordered by relevance and use jsonl format, each line has a json with title and description, nothing else in your response:\n\n{\"title\":..., \"description\":...}\n{\"title\":..., \"description\":...}...\n\ndescription is the first sentence of the wikipedia article\n\n"
-            
-            prompt = f"\npost title: {conversation['post']['title']}\n\npost text: {conversation['post']['text']}\n\ncomments:\n{comments_str}\n\n" \
-             f"based on the content of the post and the comments, give up to {topk} wikipedia articles that provide " \
-             f"useful information and answer potential questions, ambiguities or misunderstandings from the conversation or they provide some relevant context, only show articles that add very useful context, you don't need to generate all {topk} if you are not confident, you might also give 0 results, " \
-             "ordered by relevance and use jsonl format, each line has a json with title and description, nothing else in your response:\n\n{\"title\":..., \"description\":...}\n{\"title\":..., \"description\":...}...\n\ndescription is the first sentence of the wikipedia article\n\n"
-            
-            response, used_tokens = custom_chatgpt_api(prompt)
-
-            #print(f"generated candidates:\n {response}\n")
+            if proactive:
+                prompt = f"\npost title: {conversation['post']['title']}\n\npost text: {conversation['post']['text']}\n\ncomments:\n{comments_str}\n\n" \
+                f"based on the last comment, or the post if no comments shown, give up to {topk} wikipedia articles that provide " \
+                f"useful information and answer potential questions, ambiguities or misunderstandings or they provide some relevant context, only show articles that add very useful context, you don't need to generate all {topk}, you might also give 0 results if not necesary, " \
+                "ordered by relevance and use jsonl format, each line has a json with title and description, nothing else in your response:\n\n{\"title\":..., \"description\":...}\n{\"title\":..., \"description\":...}...\n\ndescription is the first sentence of the wikipedia article\n\n"
+            else:
+                prompt = f"\npost title: {conversation['post']['title']}\n\npost text: {conversation['post']['text']}\n\ncomments:\n{comments_str}\n\n" \
+                f"based on the content of the post and the comments, give up to {topk} wikipedia articles that provide " \
+                f"useful information and answer potential questions, ambiguities or misunderstandings from the conversation or they provide some relevant context, only show articles that add very useful context, you don't need to generate all {topk} if you are not confident, you might also give 0 results, " \
+                "ordered by relevance and use jsonl format, each line has a json with title and description, nothing else in your response:\n\n{\"title\":..., \"description\":...}\n{\"title\":..., \"description\":...}...\n\ndescription is the first sentence of the wikipedia article\n\n"
+                
+            try:
+                response, used_tokens = custom_chatgpt_api(prompt)
+            except:
+                response, used_tokens = chatgpt_api(prompt, model_name='gpt-3.5-turbo')
 
             response = response.replace('\n\n', '\n')
             generated_candidate_docs = response.split('\n')
@@ -118,7 +116,10 @@ class LMGR:
                 retrieved_candidates_str = "\n".join([f"{i+1}. {self.docs[cand_doc[0]]}" for i, cand_doc in enumerate(retrieved_candidates)])
                 prompt = f"Pick the candidate that describes the same concept with the given document, return only the number "\
                          f"in your response, nothing else, if none of them then return 0:\n\ndocument: {doc}\n\ncandidates: {retrieved_candidates_str}\n\n"
-                response, used_tokens = custom_chatgpt_api(prompt)
+                try:
+                    response, used_tokens = custom_chatgpt_api(prompt)
+                except:
+                    response, used_tokens = chatgpt_api(prompt, model_name='gpt-3.5-turbo')
                 cand_id = 0
                 try:
                     cand_id = int(re.sub(r'\D', '', response).strip())
@@ -136,17 +137,10 @@ class LMGR:
 
             results.append(final_docs)
 
-            #o.write('{"results": '+str(final_docs)+'}\n')
-            #o.flush()
-
-            # print the text of the final candidates
-            #final_docs_text = "\n".join([f"{i+1}. {self.docs[cand_doc[0]]}" for i, cand_doc in enumerate(final_docs)])
-            #print(f"final candidates:\n {final_docs_text}\n")
-
         return results
 
 if __name__ == '__main__':
     lmgr = LMGR()
     with open('test.jsonl') as f:
         conversations = [json.loads(line) for line in f]
-        results = lmgr.search(conversations) 
+        results = lmgr.search(conversations[:1]) 
