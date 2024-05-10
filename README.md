@@ -45,7 +45,7 @@ The annotations field is only for the test split, the rest of the schema remains
 
 # Baselines
 
-In this repo you can reproduce the baseline results for BM25, dense retrieval (single-vector) and LMGR (see `baselines.py`).
+In this repo you can reproduce the baseline results for BM25, vanilla dense retrieval (single-vector) and LMGR (see `baselines.py`). In the following 2 tables are our results for all the other models we tested.
 
 ## Reactive Retrieval
 
