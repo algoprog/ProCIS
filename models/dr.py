@@ -19,8 +19,9 @@ from torch.utils.data import DataLoader
 
 
 random.seed(42)
-
 logging.getLogger().setLevel(logging.INFO)
+
+# This is a clean implementation of a valilla dense retriever
 
 
 class VectorIndex:
