@@ -94,8 +94,10 @@ In this repo you can reproduce the baseline results for BM25, vanilla dense retr
 | Avg. number of unique users per conversation | 3.17 (± 1.41) | 2.93 (± 1.16) | 2.88 (± 1.11) | 3.41 (± 1.39) |
 | Avg. number of comments per user | 6.71 (± 462.74) | 1.88 (± 8.21) | 1.92 (± 12.93) | 1.45 (± 2.49) |
 
-# Citation
+# Questions?
+Open an issue or send an email to Chris Samarinas (csamarinas@umass.edu)
 
+# Citation
 You can use the following to cite our work:
 
 ```
