@@ -101,10 +101,12 @@ Open an issue or send an email to Chris Samarinas (csamarinas@umass.edu)
 You can use the following to cite our work:
 
 ```
-@article{Anonymous_2024_ProCIS,
-  title   =  {ProCIS: A Benchmark for Proactive Retrieval in Conversations},
-  author  =  {},
-  journal =  {Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval},
-  year    =  {2024}
+@misc{Samarinas_2024_ProCIS,
+      title={ProCIS: A Benchmark for Proactive Retrieval in Conversations}, 
+      author={Chris Samarinas and Hamed Zamani},
+      year={2024},
+      eprint={2405.06460},
+      archivePrefix={arXiv},
+      primaryClass={cs.IR}
 }
 ```
