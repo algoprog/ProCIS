@@ -1,5 +1,7 @@
 # ProCIS: A Benchmark for Proactive Retrieval in Conversations
 
+[![arxiv](https://img.shields.io/badge/arXiv-2405.06460-b31b1b.svg)](https://arxiv.org/abs/2405.06460)
+
 The field of conversational information seeking is changing how we interact with search engines through natural language interactions. Existing datasets and methods are mostly evaluating reactive conversational information seeking systems that solely provide response to every query from the user. We identify a gap in building and evaluating proactive conversational information seeking systems that can monitor a multi-party human conversation and proactively engage in the conversation at an opportune moment by retrieving useful resources and suggestions. In this paper, we introduce a large-scale dataset for proactive document retrieval that consists of over 2.8 million conversations. We conduct crowdsourcing experiments to obtain high-quality and relatively complete relevance judgments through depth-k pooling. We also collect annotations related to the parts of the conversation that are related to each document, enabling us to evaluate proactive retrieval systems. We introduce normalized proactive discounted cumulative gain (npDCG) for evaluating these systems, and further provide benchmark results for a wide range of models, including a novel model we developed for this task.
 
 You can download the dataset from [here](https://archive.org/details/procis). The zip contains the data splits for training and evaluation and the Wikipedia corpus.
