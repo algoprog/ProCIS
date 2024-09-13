@@ -6,7 +6,7 @@ The field of conversational information seeking is changing how we interact with
 
 # Dataset
 
-You can download the dataset [here](https://archive.org/details/procis). It's a 5GB compressed zip with all the required .jsonl files. It contains the data splits for training and evaluation and the Wikipedia corpus.
+You can download the dataset [here](https://archive.org/download/procis/procis.zip). It's a 5GB compressed zip with all the required .jsonl files. It contains the data splits for training and evaluation and the Wikipedia corpus.
 
 # Data format
 
