@@ -154,11 +154,11 @@ if __name__ == '__main__':
     with open('train.jsonl') as f:
         for line in f:
             d = json.loads(line)
-            for i in range(len(d['thread'])):
+            for i in range(len(d['thread']) - 1):  # Exclude the last item
                 d_sub = d.copy()
-                d_sub['thread'] = d_sub['thread'][:i+1]
+                d_sub['thread'] = d_sub['thread'][:i]  # Exclude item at index i
                 doc = prepare_query(d_sub, turns_max_tokens=300, title_max_tokens=30, post_max_tokens=100)
-                label = 1 if len(d_sub['thread'][-1]['wiki_links']) > 0 else 0
+                label = 1 if len(d['thread'][i]['wiki_links']) > 0 else 0  # Label based on next item
                 docs.append(doc)
                 labels.append(label)
             limit -= 1
