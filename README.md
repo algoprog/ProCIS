@@ -8,6 +8,10 @@ The field of conversational information seeking is changing how we interact with
 
 You can download the dataset [here](https://archive.org/download/procis/procis.zip). It's a 5GB compressed zip with all the required .jsonl files. It contains the data splits for training and evaluation and the Wikipedia corpus.
 
+# Updates
+
+* **[Sep 12 2024]**: ⚠️ There is an issue with the pre-trained binary classifier. It was incorrectly trained including the last utterance, which is not correct for the proactive setting. Retraining the model with the fixed code might yield higher metrics. See the fix in this [commit](https://github.com/algoprog/ProCIS/commit/e06ee5205298d25bd90dce5ae22176146a405fba)
+
 # Data format
 
 ProCIS consists of four subsets: train, dev, future-dev, and test. The three subsets of train, dev, and test are split randomly, while the future-dev set only contains conversations that follow after the conversations in the training set chronologically. This split can be used for evaluating the generalization capabilities of retrieval models in potentially new emerging concepts and topics not seen during training. The test split was sampled from 100 unique random subreddits, all from posts with at least a Reddit score of 20 to ensure high quality. The test set has relevance judgements from crowdsourcing. Along with relevance judgements, we also collected evidence annotations to enable evaluation of proactive search systems. Each split is a jsonl file with the following format:
