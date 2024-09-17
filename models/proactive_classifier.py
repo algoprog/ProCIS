@@ -120,7 +120,7 @@ if __name__ == '__main__':
     with open('train.jsonl') as f:
         for line in tqdm(f):
             d = json.loads(line)
-            for i in range(len(d['thread']) - 1):
+            for i in range(len(d['thread'])):
                 d_sub = d.copy()
                 d_sub['thread'] = d['thread'][:i]
                 doc = prepare_query(d_sub, turns_max_tokens=300, title_max_tokens=30, post_max_tokens=100)
@@ -154,7 +154,7 @@ if __name__ == '__main__':
     with open('train.jsonl') as f:
         for line in f:
             d = json.loads(line)
-            for i in range(len(d['thread']) - 1):  # Exclude the last item
+            for i in range(len(d['thread'])):
                 d_sub = d.copy()
                 d_sub['thread'] = d_sub['thread'][:i]  # Exclude item at index i
                 doc = prepare_query(d_sub, turns_max_tokens=300, title_max_tokens=30, post_max_tokens=100)
